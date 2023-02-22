@@ -26,7 +26,8 @@ public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         System.out.print("Enter file name:");
-        String fileName = scanner.next();
+        ArrayList<Student> studentArrayList = new ArrayList<>();
+        int studentCount = 0;
         int menuControl = 0;
         FileControl file = new FileControl();
         while (menuControl != 4) {
@@ -35,25 +36,37 @@ public class Main {
             switch (menuControl) {
                 case 1: {
                     System.out.println("Enter first and family name, specialization, age, year, group number, avaage score:\n ");
-                    Student student = new Student(scanner.next(), scanner.next(), scanner.next(), scanner.nextInt(), scanner.nextInt(), scanner.nextInt(), scanner.nextFloat());
-                    file.FileWrite(student, fileName);
+                    studentArrayList.add(new Student(scanner.next(), scanner.next(), scanner.next(), scanner.nextInt(), scanner.nextInt(), scanner.nextInt(), scanner.nextFloat()));
+                    System.out.print("Choose file to write");
+                    String fileName = scanner.next();
+                    file.fileWrite(studentArrayList.get(studentCount).getInfo(studentCount), fileName);
                     break;
                 }
                 case 2: {
-                    file.FileRead(fileName);
+                    System.out.print("Choose file to read: 1 - Studentdb.bin, 2 - ");
+                    String fileName = scanner.next();
+                    if (fileName == "Studentdb.bin") {
+                        file.fileRead(fileName);
+                    } else {
+                        System.out.print("Error in the name of file");
+                    }
                     break;
                 }
                 case 3: {
-                    break;
-                }
-                case 4: {
+                    System.out.print("Choose file to delete: 1 - Studentdb.bin, 2 - ");
+                    String fileName = scanner.next();
+                    if (fileName == "Studentdb.bin") {
+                        file.fileDelete(fileName);
+                    } else {
+                        System.out.print("Error in the name of file");
+                    }
                     break;
                 }
                 default:
                     System.out.println("No options");
 
             }
-
+            menuControl = scanner.nextInt();
         }
         System.out.println("Thank you for using this shity app");
     }

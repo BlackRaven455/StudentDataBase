@@ -17,14 +17,20 @@ public class Student extends Human {
         this.specialization = specialization;
         listOfStudents.add(familyName + " | " + firstName + " | " + specialization + " | " + age + " | " + year + " | " + groupNumber + " | " + avarageScore+ " || ");
     }
-    public String getInfo(int index,int length){
-        if (length != 0 && length >1)
-            for (int i = 0; i < length; i++)
-            {
-                //return listOfStudents.get(i);
-            }
+    public void addStudent(String firstName, String familyName,  String specialization, int age, int year, int groupNumber,float avarageScore){
+        listOfStudents.add(familyName + " | " + firstName + " | " + specialization + " | " + age + " | " + year + " | " + groupNumber + " | " + avarageScore+ " || ");
+    }
+
+    public String getInfo(int index){
         return listOfStudents.get(index);
     }
 
+    public void deleteInfo(int index){
+        listOfStudents.get(index);
+        System.out.print("Deleted");
+    }
 
+//    static{
+//
+//    }
 }
