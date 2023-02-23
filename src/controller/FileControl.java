@@ -5,25 +5,31 @@ import java.io.*;
 public class FileControl {
     FileOutputStream fileOutputStream;
     FileInputStream fileInputStream;
-    public void fileWrite(String writedInfo, String fileName){
+    public void fileWrite(String writtenInfo, String fileName) throws IOException {
         try {
             fileOutputStream = new FileOutputStream(fileName, true);
             ObjectOutputStream objectOutputStream= new ObjectOutputStream(fileOutputStream);
-            objectOutputStream.writeBytes(writedInfo);
+            objectOutputStream.writeObject(writtenInfo);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        fileOutputStream.close();
     }
     public void fileRead(String fileName){
         try {
             fileInputStream = new FileInputStream(fileName);
             ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
-            objectInputStream.readByte();
+            System.out.println(objectInputStream.readLine());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        try {
+            fileInputStream.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
-    public void fileDelete(String fileName){
+    public <T> void fileDelete(String fileName, Object deletedInfo){
         try {
             fileInputStream = new FileInputStream(fileName);
         } catch (FileNotFoundException e) {

@@ -18,55 +18,71 @@
 import controller.FileControl;
 import controller.Student;
 
-import java.io.File;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter file name:");
         ArrayList<Student> studentArrayList = new ArrayList<>();
         int studentCount = 0;
         int menuControl = 0;
         FileControl file = new FileControl();
         while (menuControl != 4) {
-            System.out.println("1 - Add student\n2- Delete student\n3 - List of students\n4 - Exit");
+            System.out.println("1 - Add student\n2- Delete student\n3 - List of students\n4 - Exit\n");
             menuControl = scanner.nextInt();
             switch (menuControl) {
                 case 1: {
                     System.out.println("Enter first and family name, specialization, age, year, group number, avaage score:\n ");
                     studentArrayList.add(new Student(scanner.next(), scanner.next(), scanner.next(), scanner.nextInt(), scanner.nextInt(), scanner.nextInt(), scanner.nextFloat()));
-                    System.out.print("Choose file to write");
+                    System.out.print("Choose file to write: 1 - Studentdb.bin, 2 - \n\n");
                     String fileName = scanner.next();
-                    file.fileWrite(studentArrayList.get(studentCount).getInfo(studentCount), fileName);
-                    break;
+                    try {
+                        if (fileName.equals("Studentdb.bin")) {
+                            file.fileWrite(studentArrayList.get(studentArrayList.size()-1).getInfo(studentArrayList.size()-1), fileName);
+                        } else {
+                            System.out.print("Error in the name of file\n");
+                        }
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+
+
                 }
                 case 2: {
-                    System.out.print("Choose file to read: 1 - Studentdb.bin, 2 - ");
+                    System.out.print("Choose file to read: 1 - Studentdb.bin, 2 - not available\n");
                     String fileName = scanner.next();
-                    if (fileName == "Studentdb.bin") {
+                    if (fileName.equals("Studentdb.bin")) {
                         file.fileRead(fileName);
                     } else {
-                        System.out.print("Error in the name of file");
+                        System.out.print("Error in the name of file\n");
                     }
-                    break;
+
                 }
                 case 3: {
-                    System.out.print("Choose file to delete: 1 - Studentdb.bin, 2 - ");
-                    String fileName = scanner.next();
-                    if (fileName == "Studentdb.bin") {
-                        file.fileDelete(fileName);
-                    } else {
-                        System.out.print("Error in the name of file");
+                    System.out.print("Choose student to delete: 1 - Studentdb.bin, 2 - not available\n");
+                    studentCount = scanner.nextInt();
+                    try {
+                        studentArrayList.get(studentCount).deleteInfo(studentCount);
+                    } catch (IndexOutOfBoundsException e) {
+                        System.out.print("Out of bound. No data.\n");
+                        continue;
                     }
-                    break;
+                    studentArrayList.remove(studentCount);
+                    System.out.print("Choose file to delete: 1 - Studentdb.bin, 2 - not available\n");
+                    String fileName = scanner.next();
+                    if (fileName.equals("Studentdb.bin")) {
+                        file.fileDelete(fileName, studentArrayList);
+                    } else {
+                        System.out.print("Error in the name of file\n");
+                    }
                 }
                 default:
                     System.out.println("No options");
 
             }
-            menuControl = scanner.nextInt();
         }
         System.out.println("Thank you for using this shity app");
     }

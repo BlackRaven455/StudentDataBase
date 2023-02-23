@@ -3,7 +3,7 @@ package controller;
 import java.util.ArrayList;
 
 public class Student extends Human {
-    public static ArrayList<String> listOfStudents;
+    public static ArrayList<String> listOfStudents = new ArrayList<>();
     private String specialization = new String();
     private int groupNumber = 1;
     private int year = 1;
@@ -15,10 +15,10 @@ public class Student extends Human {
         this.groupNumber = groupNumber;
         this.year = year;
         this.specialization = specialization;
-        listOfStudents.add(familyName + " | " + firstName + " | " + specialization + " | " + age + " | " + year + " | " + groupNumber + " | " + avarageScore+ " || ");
+        listOfStudents.add(familyName + " | " + firstName + " | " + specialization + " | " + age + " | " + year + " | " + groupNumber + " | " + avarageScore+ " || \n");
     }
     public void addStudent(String firstName, String familyName,  String specialization, int age, int year, int groupNumber,float avarageScore){
-        listOfStudents.add(familyName + " | " + firstName + " | " + specialization + " | " + age + " | " + year + " | " + groupNumber + " | " + avarageScore+ " || ");
+        listOfStudents.add(familyName + " | " + firstName + " | " + specialization + " | " + age + " | " + year + " | " + groupNumber + " | " + avarageScore+ " ||\n");
     }
 
     public String getInfo(int index){
