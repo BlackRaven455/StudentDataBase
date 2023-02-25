@@ -18,7 +18,7 @@ public class FileSystemDatabase implements IDatabase<Student> {
     /**
      * We are writing always two magic and size = 12 bytes (int = 4 bytes)
      */
-    protected final static int MIN_SIZE = 12;
+    protected final static int MIN_SIZE = 16;
 
     protected final Path file;
     protected final Set<Student> students;

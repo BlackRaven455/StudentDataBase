@@ -1,7 +1,7 @@
 package thedarkdnktv.studentdb.api;
 
 import java.io.IOException;
-import java.util.Collection;
+import java.util.*;
 
 public interface IDatabase<T> {
 
@@ -10,6 +10,12 @@ public interface IDatabase<T> {
     boolean remove(T obj);
 
     Collection<T> getAllStored();
+
+    default List<T> getStudentsSorted(Comparator<T> comparator) {
+        List<T> students = new ArrayList<>(getAllStored());
+        students.sort(comparator);
+        return students;
+    }
 
     void save() throws IOException;
 

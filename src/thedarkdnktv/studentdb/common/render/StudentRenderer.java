@@ -1,37 +1,31 @@
 package thedarkdnktv.studentdb.common.render;
 
-import thedarkdnktv.studentdb.api.IRenderer;
 import thedarkdnktv.studentdb.common.model.Student;
 
-public class StudentRenderer implements IRenderer<Student> {
+import java.util.Collection;
 
-    @Override
-    public String renderAsString(Student object) {
-        StringBuilder builder = new StringBuilder();
+public class StudentRenderer {
 
-        {
-            builder.append(object.getName());
-            builder.append(' ');
-            builder.append(object.getSurname());
-            builder.append(", ");
+    private static final ConsoleListRenderer<Student> renderer;
 
-            builder.append(object.getAge());
-            builder.append(" год, ");
-
-            builder.append(object.getFaculty());
-            builder.append(", ");
-
-            builder.append(object.getCourse());
-            builder.append("-й курс, ");
-
-            builder.append(String.format("средний балл - %.2f", object.getGradePointAverage()));
-        }
-
-        return builder.toString();
+    static {
+        renderer = new ConsoleListRenderer<Student>()
+            .addColumn("ФИО", 30, st -> st.getName() + " " + st.getSurname())
+            .addColumn("Возраст", 10, Student::getAge)
+            .addColumn("Факультет", 30, Student::getFaculty)
+            .addColumn("Курс", 8, Student::getCourse)
+            .addColumn("Средний балл", 12, Student::getGradePointAverage);
     }
 
-    @Override
-    public boolean isSupported(Class<?> type) {
-        return Student.class.isAssignableFrom(type);
+    public static void renderStudentList(Collection<Student> list) {
+        renderStudentList(list, false);
+    }
+
+    public static void renderStudentList(Collection<Student> list, boolean doIndex) {
+        renderer.setRenderHeader(true);
+        renderer.setPrintIndex(doIndex);
+        renderer.data.addAll(list);
+        renderer.render();
+        renderer.data.clear();
     }
 }

@@ -1,18 +1,15 @@
 package thedarkdnktv.studentdb;
 
 import thedarkdnktv.studentdb.api.IDatabase;
-import thedarkdnktv.studentdb.api.IRenderer;
 import thedarkdnktv.studentdb.common.Operation;
 import thedarkdnktv.studentdb.common.db.FileSystemDatabase;
 import thedarkdnktv.studentdb.common.model.Student;
-import thedarkdnktv.studentdb.common.render.RenderProvider;
 import thedarkdnktv.studentdb.common.render.StudentRenderer;
 
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.InputMismatchException;
-import java.util.NoSuchElementException;
-import java.util.Scanner;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.lang.System.out;
 
@@ -22,17 +19,15 @@ public class Main {
 
     static Scanner scan;
     static IDatabase<Student> database;
-    static RenderProvider renderProvider;
 
     public static void main(String[] args) {
         println("Запуск базы данных версии v" + VERSION);
 
         try {
+            Runtime.getRuntime().addShutdownHook(new Thread(Main::exit)); // add shutdown hook to save shit if crashed
             scan = new Scanner(System.in);
             database = new FileSystemDatabase(Paths.get("db.bin"));
             database.load();
-            renderProvider = new RenderProvider();
-            initRenderers();
         } catch (Exception e) {
             println("Ошибка инициализации");
             e.printStackTrace();
@@ -44,17 +39,16 @@ public class Main {
     }
 
     static void showMenuPage() {
-        boolean isRunning = true;
-        while (isRunning) {
+        while (true) {
             println("Пожалуйста выберите операцию:");
             for (int i = 0; i < Operation.VALID_VALUES.length; i++) {
-                out.printf("\t%d. %s\n", i, Operation.VALID_VALUES[i].label);
+                out.printf("\t%d. %s\n", i + 1, Operation.VALID_VALUES[i].label);
             }
 
             Operation option;
             while (true) {
                 try {
-                    option = Operation.getById(scan.nextInt());
+                    option = Operation.getById(scan.nextInt() - 1);
                     if (option.isInvalid()) {
                         println("Выбранный ответ не существует, выберете из списка");
                         continue;
@@ -82,8 +76,8 @@ public class Main {
                     break;
                 }
                 case EXIT: {
-                    isRunning = false;
-                    exit();
+                    System.exit(0);
+                    break;
                 }
             }
         }
@@ -168,16 +162,52 @@ public class Main {
     }
 
     static void removeStudent() {
-        // TODO
+        out.print("Введите фамилию: ");
+        final String request = scan.next().toLowerCase();
+        List<Student> matched = database.getAllStored().stream()
+            .filter(s -> s.getSurname().toLowerCase().startsWith(request))
+            .collect(Collectors.toList());
+
+        if (matched.isEmpty()) {
+            out.println("Результатов не найдено");
+            return;
+        }
+
+        StudentRenderer.renderStudentList(matched, true);
+        int idx;
+
+        while (true) {
+            out.print("Введите индекс нужного студента для удаления: ");
+            try {
+                idx = scan.nextInt();
+                println();
+
+                if (idx < 0) {
+                    println("Индекс не может быть меньше нуля");
+                    continue;
+                }
+
+                if (idx > matched.size() - 1) {
+                    println("Индекс не может быть больше того, что есть в таблице");
+                    continue;
+                }
+
+                break;
+            } catch (NoSuchElementException e) {
+                scan.next();
+                println("Введите число");
+            }
+        }
+
+        if (database.remove(matched.get(idx))) {
+            out.println("Студент удалён");
+        }
     }
 
     static void showStudents() {
-        IRenderer<Student> renderer = renderProvider.getRenderer(Student.class);
-
-        println("Студенты в базе:");
-        for (Student student : database.getAllStored()) {
-            println(renderer.renderAsString(student));
-        }
+        Comparator<Student> comp = Comparator.comparing(Student::getName)
+            .thenComparing(Student::getSurname);
+        StudentRenderer.renderStudentList(database.getStudentsSorted(comp));
     }
 
     static void exit() {
@@ -190,10 +220,6 @@ public class Main {
             e.printStackTrace();
             System.exit(-2);
         }
-    }
-
-    private static void initRenderers() {
-        renderProvider.register(Student.class, new StudentRenderer());
     }
 
     static synchronized void println(Object... obj) {
