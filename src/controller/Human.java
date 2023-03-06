@@ -1,20 +1,12 @@
 package controller;
 
+import java.io.DataOutputStream;
+import java.io.IOException;
+
 abstract class Human {
-    private String firstName = "";
-    private String familyName = "";
-    private int age = 0;
-
-    public Human(String firstName, String familyName) {
-        this.familyName = familyName;
-        this.firstName = firstName;
-    }
-
-    public Human(String firstName, String familyName, int age) {
-        this.familyName = familyName;
-        this.firstName = firstName;
-        this.age = age;
-    }
+    protected String firstName = "";
+    protected String familyName = "";
+    protected int age = 0;
 
     public void setFirstName(String firstName){
         this.firstName = firstName;
@@ -43,4 +35,6 @@ abstract class Human {
     public int getAge() {
         return age;
     }
+
+    public abstract void writeInfo(DataOutputStream out) throws IOException;
 }

@@ -1,36 +1,82 @@
 package controller;
 
-import java.util.ArrayList;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.util.Objects;
 
 public class Student extends Human {
-    public static ArrayList<String> listOfStudents = new ArrayList<>();
+
     private String specialization = new String();
-    private int groupNumber = 1;
-    private int year = 1;
+    private byte groupNumber = 1;
+    private byte year = 1;
     private float avarageScore = 0.0f;
 
-    public Student(String firstName, String familyName,  String specialization, int age, int year, int groupNumber,float avarageScore) {
-        super(firstName, familyName, age);
-        this.avarageScore = avarageScore;
-        this.groupNumber = groupNumber;
-        this.year = year;
+    public String getSpecialization() {
+        return specialization;
+    }
+
+    public void setSpecialization(String specialization) {
         this.specialization = specialization;
-        listOfStudents.add(familyName + " | " + firstName + " | " + specialization + " | " + age + " | " + year + " | " + groupNumber + " | " + avarageScore+ " || \n");
-    }
-    public void addStudent(String firstName, String familyName,  String specialization, int age, int year, int groupNumber,float avarageScore){
-        listOfStudents.add(familyName + " | " + firstName + " | " + specialization + " | " + age + " | " + year + " | " + groupNumber + " | " + avarageScore+ " ||\n");
     }
 
-    public String getInfo(int index){
-        return listOfStudents.get(index);
+    public byte getGroupNumber() {
+        return groupNumber;
     }
 
-    public void deleteInfo(int index){
-        listOfStudents.get(index);
-        System.out.print("Deleted");
+    public void setGroupNumber(byte groupNumber) {
+        this.groupNumber = groupNumber;
     }
 
-//    static{
-//
-//    }
+    public byte getYear() {
+        return year;
+    }
+
+    public void setYear(byte year) {
+        this.year = year;
+    }
+
+    public float getAvarageScore() {
+        return avarageScore;
+    }
+
+    public void setAvarageScore(float avarageScore) {
+        this.avarageScore = avarageScore;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Student)) return false;
+        Student student = (Student) o;
+        return groupNumber == student.groupNumber && year == student.year && Float.compare(student.avarageScore, avarageScore) == 0 && Objects.equals(specialization, student.specialization);
+    }
+
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(specialization, groupNumber, year, avarageScore);
+    }
+
+    public void writeInfo(DataOutputStream out) throws IOException {
+        out.writeUTF(getFamilyName());
+        out.writeUTF(getFirstName());
+        out.writeByte(getAge());
+        out.writeUTF(specialization);
+        out.writeByte(year);
+        out.writeFloat(avarageScore);
+    }
+
+    public void readInfo(DataInputStream in) throws IOException {
+//        setFamilyName(in.readUTF());
+//        setFirstName(in.readUTF());
+//        setAge(in.readByte());
+        this.familyName = in.readUTF();
+        this.firstName = in.readUTF();
+        this.age = in.readByte();
+        this.specialization = in.readUTF();
+        this.year = in.readByte();
+        this.avarageScore = in.readFloat();
+    }
+
 }
