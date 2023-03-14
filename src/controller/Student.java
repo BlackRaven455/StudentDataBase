@@ -10,7 +10,7 @@ public class Student extends Human {
     private String specialization = new String();
     private byte groupNumber = 1;
     private byte year = 1;
-    private float avarageScore = 0.0f;
+    private float averageScore = 0.0f;
 
     public String getSpecialization() {
         return specialization;
@@ -36,12 +36,12 @@ public class Student extends Human {
         this.year = year;
     }
 
-    public float getAvarageScore() {
-        return avarageScore;
+    public float getAverageScore() {
+        return averageScore;
     }
 
-    public void setAvarageScore(float avarageScore) {
-        this.avarageScore = avarageScore;
+    public void setAverageScore(float averageScore) {
+        this.averageScore = averageScore;
     }
 
     @Override
@@ -49,13 +49,13 @@ public class Student extends Human {
         if (this == o) return true;
         if (!(o instanceof Student)) return false;
         Student student = (Student) o;
-        return groupNumber == student.groupNumber && year == student.year && Float.compare(student.avarageScore, avarageScore) == 0 && Objects.equals(specialization, student.specialization);
+        return groupNumber == student.groupNumber && year == student.year && Float.compare(student.averageScore, averageScore) == 0 && Objects.equals(specialization, student.specialization);
     }
 
 
     @Override
     public int hashCode() {
-        return Objects.hash(specialization, groupNumber, year, avarageScore);
+        return Objects.hash(specialization, groupNumber, year, averageScore);
     }
 
     public void writeInfo(DataOutputStream out) throws IOException {
@@ -64,7 +64,7 @@ public class Student extends Human {
         out.writeByte(getAge());
         out.writeUTF(specialization);
         out.writeByte(year);
-        out.writeFloat(avarageScore);
+        out.writeFloat(averageScore);
     }
 
     public void readInfo(DataInputStream in) throws IOException {
@@ -76,7 +76,7 @@ public class Student extends Human {
         this.age = in.readByte();
         this.specialization = in.readUTF();
         this.year = in.readByte();
-        this.avarageScore = in.readFloat();
+        this.averageScore = in.readFloat();
     }
 
 }
