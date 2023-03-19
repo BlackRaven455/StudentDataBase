@@ -6,10 +6,7 @@ import static java.lang.System.out;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashSet;
-import java.util.InputMismatchException;
-import java.util.Scanner;
-import java.util.Set;
+import java.util.*;
 
 public class Main {
     private static final Set<Student> students = new HashSet<>();
@@ -18,52 +15,39 @@ public class Main {
         FileControl file;
         Scanner scanner = new Scanner(System.in);
         int menuControl = 0;
+        Path nameFile = Paths.get("db.bin");
+        file = new FileControl(nameFile);
+        file.read(students);
         while (true) {
-            while (true) {
-                out.print("Choose database file:\n");
-                for (int i = 0; i < DatabaseFiles.values().length - 1; i++) {
-                    out.printf("\t%d. %s\n", i + 1, DatabaseFiles.getFileName(i).label);
-                }
-                try {
-                    int j = scanner.nextInt() - 1;
-                    if (j < 0 || j >= 1) { // Files from 2 to ... not existed yet
-                        out.println("File with this number doesn't exist");
-                        continue;
-                    }
-                    Path nameFile = Paths.get(DatabaseFiles.getFileName(j).label);
-                    file = new FileControl(nameFile);
+            out.println("1 - Add student\n2 - List of students\n3 - Delete student\n4 - Exit\n");
+            menuControl = scanner.nextInt();
+            switch (menuControl) {
+                case 1: {
+                    Student student = new Student();
+                    addStudent(student);
                     break;
-                } catch (InputMismatchException e) {
-                    out.println("Invalid value, use numbers\n");
-                    scanner.next();
                 }
-            }
-            while (true) {
-                out.println("1 - Add student\n2 - Delete student\n3 - List of students\n4 - Exit\n");
-                menuControl = scanner.nextInt();
-                switch (menuControl) {
-                    case 1: {
-                        Student student = new Student();
-                        addStudent(student);
-                        file.write(student);
-                        break;
-                    }
-                    case 2: {
-                        showStudent();
-                        break;
-                    }
-                    case 3: {
-                        deleteStudent();
-                        break;
-                    }
-                    case 4: {
-                        file.exitFile();
-                        out.println("Thank you for using this shity app");
-                        System.exit(0);
-                    }
-                    default:
-                        out.println("No options");
+                case 2: {
+                    showStudent();
+                    break;
+                }
+                case 3: {
+                    out.println("Enter Family  name of the student\n");
+                    String familyName = scanner.next();
 
+                    out.println("Enter  First name of the student");
+                    String firstName = scanner.next();
+                    deleteStudent(familyName, firstName);
+                    break;
+                }
+                case 4: {
+                    file.write(students);
+//                    file.exitFile();
+                    out.println("Thank you for using this shity app");
+                    System.exit(0);
+                }
+                default: {
+                    out.println("No options");
                 }
             }
         }
@@ -91,8 +75,18 @@ public class Main {
         while (true) {
             try {
                 out.println("Enter group number:");
-                byte groupNumber = scanner.nextByte();
-                student.setGroupNumber(groupNumber);
+                student.setGroupNumber(scanner.nextByte());
+                break;
+            } catch (InputMismatchException e) {
+                out.println("Input mismatch. Need byte from 0 to 127\n");
+                scanner.next();
+            }
+        }
+
+        while (true) {
+            try {
+                out.println("Enter year:");
+                student.setYear(scanner.nextByte());
                 break;
             } catch (InputMismatchException e) {
                 out.println("Input mismatch. Need byte from 0 to 127\n");
@@ -109,15 +103,40 @@ public class Main {
                 out.println("Input mismatch. Need number with . (ex: 0.0)\n");
                 scanner.next();
             }
-            students.add(student);
+        }
+        students.add(student);
+        out.println("Student added");
+
+    }
+
+    public static void showStudent() {
+        if (students.isEmpty()) {
+            out.println("Nothing to show");
+            return;
+        }
+        out.println("Std. No.| Family name | First name | Age | Specialization | Group number | Year | Average score||");
+        int index = 0;
+        for (Student student : students) {
+            out.println(index + " | " +
+                    student.getFamilyName() + " | " +
+                    student.getFirstName() + " | " +
+                    student.getAge() + " | " +
+                    student.getSpecialization() + " | " +
+                    student.getGroupNumber() + " | " +
+                    student.getYear() + " | " +
+                    student.getAverageScore() + " ||");
+            index++;
         }
 
+    }
 
-    }
-    public static void showStudent(){
-        out.println("show");
-    }
-    public static void deleteStudent(){
-        out.println("delete");
+
+    public static void deleteStudent(String familyName, String firstName) {
+        if (students.isEmpty()) {
+            out.println("Nothing to delete");
+            return;
+        }
+        students.removeIf(student -> student.getFamilyName().equalsIgnoreCase(familyName) && student.getFirstName().equalsIgnoreCase(firstName));
+        out.println("deleted");
     }
 }
