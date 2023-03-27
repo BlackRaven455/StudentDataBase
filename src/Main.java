@@ -1,5 +1,5 @@
-import controller.FileControl;
-import controller.Student;
+import common.FileControl;
+import common.Student;
 
 import static java.lang.System.out;
 
@@ -17,14 +17,15 @@ public class Main {
         int menuControl = 0;
         Path nameFile = Paths.get("db.bin");
         file = new FileControl(nameFile);
+        file.checkFile();
+
         file.read(students);
         while (true) {
             out.println("1 - Add student\n2 - List of students\n3 - Delete student\n4 - Exit\n");
             menuControl = scanner.nextInt();
             switch (menuControl) {
                 case 1: {
-                    Student student = new Student();
-                    addStudent(student);
+                    addStudent();
                     break;
                 }
                 case 2: {
@@ -34,15 +35,16 @@ public class Main {
                 case 3: {
                     out.println("Enter Family  name of the student\n");
                     String familyName = scanner.next();
-
                     out.println("Enter  First name of the student");
                     String firstName = scanner.next();
                     deleteStudent(familyName, firstName);
                     break;
                 }
                 case 4: {
-                    file.write(students);
-//                    file.exitFile();
+                    if(!students.isEmpty()){
+                        file.write(students);
+                    }
+//                    file.checkFile();
                     out.println("Thank you for using this shity app");
                     System.exit(0);
                 }
@@ -53,7 +55,8 @@ public class Main {
         }
     }
 
-    public static void addStudent(Student student) {
+    public static void addStudent() {
+        Student student = new Student();
         Scanner scanner = new Scanner(System.in);
         out.println("Enter family name:");
         student.setFamilyName(scanner.next());

@@ -1,4 +1,4 @@
-package controller;
+package common;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
